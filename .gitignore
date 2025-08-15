@@ -16,7 +16,7 @@ env/
 # Uncomment if you want to ignore the lock file
 # uv.lock
 
-# Output directory
+# Output and data directories
 output/
 data/
 
