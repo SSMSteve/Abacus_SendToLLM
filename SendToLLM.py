@@ -209,7 +209,7 @@ if __name__ == "__main__":
     # Example 1: Send JSON file with prompt from file
     try:
         # Read the prompt from file
-        with open('./data/prompt_v13.txt', 'r', encoding='utf-8') as prompt_file:
+        with open('./data/prompt_v14.txt', 'r', encoding='utf-8') as prompt_file:
             base_prompt = prompt_file.read()
 
         # Modify the prompt to request JSON output only
