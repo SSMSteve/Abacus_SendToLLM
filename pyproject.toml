@@ -1,11 +1,16 @@
 [project]
 name = "abacus-sendtollm"
-version = "0.1.0"
-description = "Add your description here"
+version = "0.2.0"
+description = "Configurable LLM chat system with support for multiple providers (Abacus.AI, OpenAI, etc.) and file attachments"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "dotenv>=0.9.9",
+    "python-dotenv>=1.0.0",
     "requests>=2.32.4",
     "types-requests>=2.32.4.20250809",
 ]
+
+[tool.mypy]
+mypy_path = "src"
+packages = ["llm_chat"]
+explicit_package_bases = true
