@@ -332,6 +332,7 @@ def send_chat_with_attachments(prompt, file_ids=None, deployment_token=None, dep
 def validate_attachments_directory(attachments_dir):
     """
     Validate that the attachments directory exists and contains expected files
+    Automatically detects files based on patterns instead of hard-coded names
 
     Args:
         attachments_dir (str): Path to the attachments directory
@@ -342,20 +343,47 @@ def validate_attachments_directory(attachments_dir):
     if not os.path.exists(attachments_dir):
         raise FileNotFoundError(f"Attachments directory not found: {attachments_dir}")
 
-    expected_files = {
-        'keyword_search': 'keyword_search_results_27977577.json',
-        'vector_search': 'vector_search_results_27977577.json',
-        'correlation_report': 'Correlation_Report.md'
+    # Get all files in the directory
+    all_files = os.listdir(attachments_dir)
+
+    # Define patterns to match different file types
+    file_patterns = {
+        'keyword_search': ['keyword_search', '_keyword', 'keyword'],
+        'vector_search': ['vector_search', '_vector', 'vector'],
+        'correlation_report': ['correlation_report', 'Correlation_Report']
     }
 
     file_status = {}
-    for key, filename in expected_files.items():
-        file_path = os.path.join(attachments_dir, filename)
-        file_status[key] = {
-            'path': file_path,
-            'exists': os.path.exists(file_path),
-            'filename': filename
-        }
+
+    # Find files matching each pattern
+    for key, patterns in file_patterns.items():
+        found_file = None
+
+        # Look for JSON files for search results, MD files for correlation report
+        expected_extensions = ['.json'] if key != 'correlation_report' else ['.md', '.txt']
+
+        for filename in all_files:
+            # Check if filename matches any pattern and has correct extension
+            if any(pattern.lower() in filename.lower() for pattern in patterns):
+                if any(filename.lower().endswith(ext) for ext in expected_extensions):
+                    found_file = filename
+                    break
+
+        if found_file:
+            file_path = os.path.join(attachments_dir, found_file)
+            file_status[key] = {
+                'path': file_path,
+                'exists': True,
+                'filename': found_file
+            }
+        else:
+            # Create a placeholder entry for missing files
+            expected_name = f"{key}.json" if key != 'correlation_report' else "correlation_report.md"
+            file_status[key] = {
+                'path': os.path.join(attachments_dir, expected_name),
+                'exists': False,
+                'filename': expected_name
+            }
 
     return file_status
 
